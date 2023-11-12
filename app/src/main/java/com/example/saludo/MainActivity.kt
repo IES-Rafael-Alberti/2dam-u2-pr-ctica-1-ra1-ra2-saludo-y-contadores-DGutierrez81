@@ -65,6 +65,10 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 
+        /**
+         * Realiza la funcionalidad principal del programa.
+         */
+
 fun Saludo(){
     var myVal by rememberSaveable { mutableStateOf( "")}
     var show by rememberSaveable { mutableStateOf(false)}
@@ -75,7 +79,7 @@ fun Saludo(){
     ConstraintLayout(modifier = Modifier.fillMaxSize()){
         val (box1, box2) = createRefs()
 
-
+        //Utilizamos dos cajas para el botón y el texto y lo colocamos en el medio
         Box(modifier = Modifier
             .constrainAs(box1){
                 top.linkTo(parent.top)
@@ -83,7 +87,8 @@ fun Saludo(){
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }){
-            Button(onClick = { show = true }) {
+            Button(onClick = { show = true
+                mensaje = ""}) {
                 Text(text = saludo)
             }
         }
@@ -96,18 +101,17 @@ fun Saludo(){
             }){
             TextField(value = mensaje, onValueChange = { mensaje = it })
         }
+        // Condicional que al ser true muestra el cuadro de diálogo.
         if(show){
             Recuadro(
                 onDismissRequest = { show = false },
                 myVal = myVal,
-                onValueChange = { myVal = it},
+                onValueChange = { myVal = it },
                 aceptar = { show = false
                 contadorA ++
                 mensaje = "Hola $myVal"
                 saludo = "A$contadorA C$contadorC"          },
                 limpiar = {myVal = ""
-                          contadorA = 0
-                          contadorC = 0
                           saludo = "Saludar"
                           mensaje = ""},
                 cancelar = {show = false
@@ -121,6 +125,16 @@ fun Saludo(){
 
 }
 
+/**
+ * Contiene la información del cuadro de diálogo.
+ * @param onDismissRequest Función de retorno que ejecuta un false para cerrar el cuadro de diálogo.
+ * @param myVal Valor actual de cadena de texto.
+ * @param onValueChange Función de retorno que recibe un String y actuliza el valor myVal.
+ * @param aceptar Función de retorno que ejecuta las funcionalidades del botón aceptar.
+ * @param limpiar Función de retorno que ejecuta las funcionalidades del botón limpiar.
+ * @param cancelar Función de retorno que ejecuta las funcionalidades del botón cancelar.
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Recuadro(
@@ -133,7 +147,8 @@ fun Recuadro(
 ){
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .wrapContentHeight(Alignment.CenterVertically)
                 .background(color = Color.White)
                 .padding(top = 15.dp)
@@ -151,20 +166,32 @@ fun Recuadro(
                 label = { Text(text = "Introduce tu nombre")})
             Spacer(modifier = Modifier.height(16.dp))
             Row {
-                Button(onClick = { aceptar() },
-                    modifier = Modifier.padding(3.dp)) {
-                    Text(text = "Aceptar")
-                }
-                Button(onClick = { limpiar() },
-                    modifier = Modifier.padding(3.dp)) {
-                    Text(text = "Limpiar")
-                }
-                Button(onClick = { cancelar() },
-                    modifier = Modifier.padding(3.dp)) {
-                    Text(text = "Cancelar")
+                for(i in 1..3){
+                    // Muestra los botones del cuadro de diálogo.
+                    when(i){
+                        1-> MyButton(onClick = { aceptar() }, texto = "Aceptar")
+                        2-> MyButton(onClick = { limpiar() }, texto = "Limpiar")
+                        3-> MyButton(onClick = { cancelar() }, texto = "Cancelar")
+                    }
                 }
             }
         }
+    }
+}
+
+/**
+ * Contiene el cuerpo básico de los botones.
+ * @param onClick Función de retorno que ejecuta las funcionalidades del botón correspondiente.
+ * @param texto Contiene el texto que le corresponde a cada botón.
+ */
+@Composable
+fun MyButton(
+    onClick: ()-> Unit,
+    texto: String
+){
+    Button(onClick = { onClick() },
+        modifier = Modifier.padding(3.dp)) {
+        Text(text = texto)
     }
 }
 
