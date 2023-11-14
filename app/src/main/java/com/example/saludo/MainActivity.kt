@@ -32,7 +32,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -76,7 +79,11 @@ fun Saludo(){
     var mensaje = ""
     var contadorA = 0
     var contadorC = 0
-    ConstraintLayout(modifier = Modifier.fillMaxSize()){
+    ConstraintLayout(modifier = Modifier
+        .fillMaxSize()
+        .paint(
+            painterResource(id = R.drawable.tormenta),
+            contentScale = ContentScale.FillBounds)){
         val (box1, box2) = createRefs()
 
         //Utilizamos dos cajas para el botón y el texto y lo colocamos en el medio
@@ -107,10 +114,12 @@ fun Saludo(){
                 onDismissRequest = { show = false },
                 myVal = myVal,
                 onValueChange = { myVal = it },
-                aceptar = { show = false
-                contadorA ++
-                mensaje = "Hola $myVal"
-                saludo = "A$contadorA C$contadorC"          },
+                aceptar = { if(myVal != ""){
+                    show = false
+                    contadorA ++
+                    mensaje = "Hola $myVal"
+                    saludo = "A$contadorA C$contadorC"
+                }else show = true },
                 limpiar = {myVal = ""
                           saludo = "Saludar"
                           mensaje = ""},
